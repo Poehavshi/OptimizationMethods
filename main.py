@@ -48,7 +48,7 @@ def find_min_by_gold(a, b, f, epsilon, t):
 
 
 def print_test_examples(find_min_method):
-    print("-" * NUMBER_OF_DASHES + "DICHOTOMY" + "-" * NUMBER_OF_DASHES)
+    print("-" * NUMBER_OF_DASHES + find_min_method.__name__ + "-" * NUMBER_OF_DASHES)
     print("First function:", find_min_method(-10, 10, f1, 0.25, 0.5), "\n")
     print("Second function:", find_min_method(-2, 3, f2, 0.25, 0.5), "\n")
     print("Third function:", find_min_method(-2, 2, f3, 0.25, 0.5), "\n")
