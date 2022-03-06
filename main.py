@@ -1,4 +1,4 @@
-from functions import f1, f2, f3, f4
+from functions import f1, f2, f3, f4, fib
 
 NUMBER_OF_DASHES = 40
 EPSILON = 0.0025
@@ -70,15 +70,6 @@ def find_min_by_fibonachi(a, b, f, not_an_argument, not_an_argument_2, n):
 
     print(f"Count number: {count}")
     return x
-
-
-def fib(n):
-    if n == 0:
-        return 0
-    elif n == 1:
-        return 1
-    else:
-        return fib(n - 1) + fib(n - 2)
 
 
 def print_examples(find_min_method):
