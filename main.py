@@ -1,4 +1,5 @@
 from functions import f1, f2, f3, f4, fib
+from typing import Callable
 
 NUMBER_OF_DASHES = 40
 EPSILON = 0.0025
@@ -6,7 +7,9 @@ PRECISION = 0.005
 N = 20
 
 
-def find_min_by_dichotomy(a, b, f, epsilon, precision, not_an_argument):
+def find_min_by_dichotomy(a: float, b: float, f: Callable, **kwargs) -> float:
+    epsilon = kwargs["epsilon"]
+    precision = kwargs["precision"]
     if epsilon > precision:
         raise ValueError("epsilon must be < precision")
     if a > b:
@@ -25,13 +28,14 @@ def find_min_by_dichotomy(a, b, f, epsilon, precision, not_an_argument):
     return x
 
 
-def find_min_by_gold(a, b, f, not_an_argument, epsilon, not_an_argument_2):
+def find_min_by_gold(a: float, b: float, f: Callable, **kwargs) -> float:
+    precision = kwargs["precision"]
     if a > b:
         raise ValueError("a must be < b")
     count = 0
     y1 = f((b-a) * 0.382 + a)
     y2 = f(b - (b-a) * 0.382)
-    while b - a > epsilon:
+    while b - a > precision:
         count += 1
         if y1 < y2:
             b -= (b-a) * 0.382
@@ -47,7 +51,8 @@ def find_min_by_gold(a, b, f, not_an_argument, epsilon, not_an_argument_2):
     return x
 
 
-def find_min_by_fibonachi(a, b, f, not_an_argument, not_an_argument_2, n):
+def find_min_by_fibonacci(a: float, b: float, f: Callable, **kwargs) -> float:
+    n = kwargs["n"]
     if a > b:
         raise ValueError("a must be < b")
     count = 1
@@ -80,13 +85,16 @@ def find_min_by_fibonachi(a, b, f, not_an_argument, not_an_argument_2, n):
 
 def print_examples(find_min_method):
     print("-" * NUMBER_OF_DASHES + find_min_method.__name__ + "-" * NUMBER_OF_DASHES)
-    print("1 function:", find_min_method(-10, 10, f1, EPSILON, PRECISION, N), "\n")
-    print("2 function:", find_min_method(-2, 3, f2, EPSILON, PRECISION, N), "\n")
-    print("3 function:", find_min_method(-2, 2, f3, EPSILON, PRECISION, N), "\n")
-    print("4 function:", find_min_method(-10, 10, f4, EPSILON, PRECISION, N))
+    #              a    b   f
+    test_cases = [[-10, 10, f1],
+                  [-2,  3,  f2],
+                  [-2,  2,  f3],
+                  [-10, 10, f4]]
+    for i, case in enumerate(test_cases):
+        print(f"{i+1} function:", find_min_method(*case, epsilon=EPSILON, precision=PRECISION, n=N), "\n")
 
 
 if __name__ == '__main__':
     print_examples(find_min_by_dichotomy)
     print_examples(find_min_by_gold)
-    print_examples(find_min_by_fibonachi)
+    print_examples(find_min_by_fibonacci)
