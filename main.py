@@ -20,7 +20,7 @@ def find_min_by_dichotomy(a, b, f, epsilon, precision, not_an_argument):
             b = x + epsilon / 2
         elif y1 > y2:
             a = x - epsilon / 2
-        count += 1
+        count += 2
     print(f"Iterations: {count}")
     return x
 
@@ -30,7 +30,7 @@ def find_min_by_gold(a, b, f, not_an_argument, epsilon, not_an_argument_2):
         raise ValueError("a must be < b")
     count = 0
     y1 = f((b-a) * 0.382 + a)
-    y2 = f((b-a) * 0.382)
+    y2 = f(b - (b-a) * 0.382)
     while b - a > epsilon:
         count += 1
         if y1 < y2:
@@ -50,7 +50,7 @@ def find_min_by_gold(a, b, f, not_an_argument, epsilon, not_an_argument_2):
 def find_min_by_fibonachi(a, b, f, not_an_argument, not_an_argument_2, n):
     if a > b:
         raise ValueError("a must be < b")
-    count = 0
+    count = 1
     x1 = a + (b - a) * fib(n - 2) / fib(n)
     x2 = a + (b - a) * fib(n - 1) / fib(n)
     y1 = f(x1)
