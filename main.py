@@ -62,19 +62,19 @@ def find_min_by_gold(a: float, b: float, f: FunctionType, **kwargs) -> float:
     precision = kwargs["precision"]
     if a > b:
         raise ValueError("a must be < b")
-    count = 0
-    y1 = f((b-a) * 0.382 + a)
-    y2 = f(b - (b-a) * 0.382)
+    y1 = f((b - a) * 0.382 + a)
+    y2 = f(b - (b - a) * 0.382)
+    count = 2
     while b - a > precision:
         count += 1
         if y1 < y2:
-            b -= (b-a) * 0.382
+            b -= (b - a) * 0.382
             y2 = y1
-            y1 = f((b-a) * 0.382 + a)
+            y1 = f((b - a) * 0.382 + a)
         else:
-            a += (b-a) * 0.382
+            a += (b - a) * 0.382
             y1 = y2
-            y2 = f(b - (b-a) * 0.382)
+            y2 = f(b - (b - a) * 0.382)
 
     x = (a + b) / 2
     print(f"Count number: {count}")
@@ -100,13 +100,12 @@ def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> floa
     n = kwargs["n"]
     if a > b:
         raise ValueError("a must be < b")
-    count = 1
+    count = 2
     x1 = a + (b - a) * fib(n - 2) / fib(n)
     x2 = a + (b - a) * fib(n - 1) / fib(n)
     y1 = f(x1)
     y2 = f(x2)
-
-    while n != 1:
+    while n != 3:
         count += 1
         n -= 1
         if y1 > y2:
@@ -134,11 +133,11 @@ def print_examples(find_min_method):
     :param find_min_method: method to find min
     """
     print("-" * NUMBER_OF_DASHES + find_min_method.__name__ + "-" * NUMBER_OF_DASHES)
-    case = namedtuple('TestCase',  ['a', 'b', 'f'])
+    case = namedtuple('TestCase', ['a', 'b', 'f'])
     #                  a    b   f
     test_cases = (case(-10, 10, f1),
-                  case(-2,  3,  f2),
-                  case(-2,  2,  f3),
+                  case(-2, 3, f2),
+                  case(-2, 2, f3),
                   case(-10, 10, f4))
 
     for i, case in enumerate(test_cases):
