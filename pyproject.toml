@@ -8,6 +8,7 @@ authors = ["Sotnikov Arkadiy <cotnikoarkady@gmail.com>"]
 python = "^3.10"
 streamlit = "^1.8.1"
 hydra-core = "^1.1.2"
+matplotlib = "^3.5.1"
 
 [tool.poetry.dev-dependencies]
 

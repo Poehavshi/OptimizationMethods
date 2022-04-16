@@ -1,3 +1,4 @@
+from collections import namedtuple
 from math import cosh, exp, tanh
 
 
@@ -41,3 +42,11 @@ def fib(n: int) -> int:
         return 1
     else:
         return fib(n - 1) + fib(n - 2)
+
+
+case = namedtuple('TestCase', ['a', 'b', 'f'])
+#                  a    b   f
+TEST_CASES = (case(-10, 10, f1),
+              case(-2, 3, f2),
+              case(-2, 2, f3),
+              case(-10, 10, f4))

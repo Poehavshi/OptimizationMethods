@@ -9,7 +9,7 @@ from collections import namedtuple
 log = logging.getLogger(__name__)
 
 
-def find_min_by_dichotomy(a: float, b: float, f: FunctionType, **kwargs) -> float:
+def find_min_by_dichotomy(a: float, b: float, f: FunctionType, **kwargs) -> tuple[float, int]:
     """
     Function to find min by dichotomy method, also known as bisection method.
     The method consists of repeatedly bisecting the interval defined by
@@ -42,10 +42,10 @@ def find_min_by_dichotomy(a: float, b: float, f: FunctionType, **kwargs) -> floa
             a = x - epsilon / 2
         count += 2
     log.info(f"Iterations: {count}")
-    return x
+    return x, count
 
 
-def find_min_by_gold(a: float, b: float, f: FunctionType, **kwargs) -> float:
+def find_min_by_gold(a: float, b: float, f: FunctionType, **kwargs) -> tuple[float, int]:
     """
     Function to find min by golden-section search method.
     For a strictly unimodal function with an extremum inside the interval, it will find that extremum,
@@ -79,10 +79,10 @@ def find_min_by_gold(a: float, b: float, f: FunctionType, **kwargs) -> float:
 
     x = (a + b) / 2
     log.info(f"Count number: {count}")
-    return x
+    return x, count
 
 
-def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> float:
+def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> tuple[float, int]:
     """
     Function to find min by fibonacci search method.
     A very similar to golden ratio method.
@@ -124,7 +124,7 @@ def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> floa
 
     x = (x1 + x2) / 2
     log.info(f"Count number: {count}")
-    return x
+    return x, count
 
 
 def print_examples(find_min_method, config: DictConfig):

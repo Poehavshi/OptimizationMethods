@@ -14,7 +14,7 @@ poetry install
 ```
 4. Run streamlit
 ```shell
-poetry run streamlit main.py app_module=app.views.one_argument_examples
+poetry run streamlit main.py
 ```
 
 ### Pycharm
@@ -23,5 +23,5 @@ poetry run streamlit main.py app_module=app.views.one_argument_examples
 3. Tick "install packages from pyproject.toml" and select other options
 4. Run streamlit in pycharm terminal:
 ```shell
-run streamlit main.py app_module=app.views.one_argument_examples
+run streamlit main.py
 ```
