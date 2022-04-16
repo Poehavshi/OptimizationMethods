@@ -1,0 +1,8 @@
+dashes_number: 40
+epsilon: 0.0025
+precision: 0.005
+N: 20
+
+app_module: ???
+
+demoapp:
