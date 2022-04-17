@@ -4,6 +4,7 @@ import hydra
 import streamlit as st
 from omegaconf import DictConfig
 from ..models.multi_dimensional_functions import f1, f
+from ..controllers.multi_dimensional_methods import find_min_by_coordinate_descent
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,6 +14,7 @@ log = logging.getLogger(__name__)
 
 def two_argument_form(config: DictConfig):
     st.title("Functions of two and more arguments")
+    st.write(f"minimum:{find_min_by_coordinate_descent((0.,0.), f1, config)}")
     st.pyplot(create_plot())
 
 
