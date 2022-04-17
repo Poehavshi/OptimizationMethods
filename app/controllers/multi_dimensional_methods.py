@@ -17,13 +17,13 @@ def __find_min_by_dichotomy(f: FunctionType, pos_0, pos_1, config: DictConfig):
             break
         pos_c = (pos_1 + pos_0) * 0.5
 
-        if f(*(pos_c+direction)) > f(*(pos_c-direction)):
+        if f(*(pos_c + direction)) > f(*(pos_c - direction)):
             pos_1 = pos_c
             continue
 
         pos_0 = pos_c
     log.info(f"Dichotomy iterations number: {i}")
-    return (pos_1+pos_0) * 0.5
+    return (pos_1 + pos_0) * 0.5
 
 
 def find_min_by_coordinate_descent(start_pos: tuple[float, float], f: FunctionType, config: DictConfig):
@@ -64,7 +64,7 @@ def find_min_by_coordinate_descent(start_pos: tuple[float, float], f: FunctionTy
 
         pos_0 = pos_1
 
-        if abs(pos_1[coordinate_number]-x_i) < epsilon:
+        if abs(pos_1[coordinate_number] - x_i) < epsilon:
             opt_coord_n += 1
             if opt_coord_n == len(pos_1):
                 log.info(f"Per coord descend iterations number : {i}")
@@ -74,3 +74,44 @@ def find_min_by_coordinate_descent(start_pos: tuple[float, float], f: FunctionTy
     log.info(f"per coord descend iterations number : {max_iterations}")
 
     return pos_0
+
+
+def find_min_by_gradient_descent(start_pos: tuple[float, float], f: FunctionType, config: DictConfig):
+    def gradient(function: FunctionType, x, eps):
+        x_l = x
+        x_r = x
+        df = np.zeros(len(x))
+
+        for i in range(len(x)):
+            x_l[i] = x_l[i] - eps
+            x_r[i] = x_r[i] + eps
+
+            df[i] = (function(*x_r) - function(*x_l)) * (0.5 / eps)
+
+            x_l[i] = x_l[i] + eps
+            x_r[i] = x_r[i] - eps
+        return df
+
+    epsilon = config.epsilon
+    max_iterations = config.N
+
+    pos_i = np.array(start_pos)
+
+    pos_i_1 = np.array(start_pos)
+
+    counter = 0
+    while True:
+        counter += 1
+        if counter == max_iterations:
+            break
+        pos_i_1 = pos_i - gradient(f, pos_i, epsilon)
+
+        pos_i_1 = __find_min_by_dichotomy(f, pos_i, pos_i_1, config)
+
+        if np.linalg.norm(pos_i_1 - pos_i) < epsilon:
+            break
+        pos_i = pos_i_1
+
+    log.info(f"gradient descend iterations number :  + {counter}")
+
+    return (pos_i_1 + pos_i) * 0.5
