@@ -2,7 +2,7 @@ import hydra
 from omegaconf import DictConfig
 import logging
 
-from app.models.functions_of_one_argument import f1, f2, f3, f4, fib
+from app.models.one_dimensional_functions import f1, f2, f3, f4, fib
 from types import FunctionType
 from collections import namedtuple
 
@@ -127,9 +127,9 @@ def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> tupl
     return x, count
 
 
-def print_examples(find_min_method, config: DictConfig):
+def __print_examples(find_min_method, config: DictConfig):
     """
-    log.info examples of methods usage
+    Print examples of methods usage
 
     :param config: config from hydra
     :param find_min_method: method to find min
@@ -147,11 +147,11 @@ def print_examples(find_min_method, config: DictConfig):
         log.info(f"min x = {find_min_method(*case, epsilon=config.epsilon, precision=config.precision, n=config.N)} \n")
 
 
-@hydra.main(config_path="./conf", config_name="1d_methods")
+@hydra.main(config_path="./conf", config_name="config")
 def main(config: DictConfig):
-    print_examples(find_min_by_dichotomy, config)
-    print_examples(find_min_by_gold, config)
-    print_examples(find_min_by_fibonacci, config)
+    __print_examples(find_min_by_dichotomy, config)
+    __print_examples(find_min_by_gold, config)
+    __print_examples(find_min_by_fibonacci, config)
 
 
 if __name__ == '__main__':

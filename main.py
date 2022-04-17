@@ -2,8 +2,8 @@ import logging
 import hydra
 from omegaconf import DictConfig
 
-from app.views.one_argument_examples import one_argument_form
-from app.views.two_argument_examples import two_argument_form
+from app.views.one_dimensional_examples import one_argument_form
+from app.views.multidimensional_examples import two_argument_form
 
 log = logging.getLogger(__name__)
 
