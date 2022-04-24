@@ -1,117 +1,88 @@
 import logging
-from types import FunctionType
 import numpy as np
+from app.models.multi_dimensional_functions import AbstractFunction
 
 from omegaconf import DictConfig
 
 log = logging.getLogger(__name__)
 
 
-def __find_min_by_dichotomy(f: FunctionType, pos_0, pos_1, config: DictConfig):
-    epsilon = config.epsilon
-    max_iterations = config.N
-    direction = ((pos_0 - pos_1) / np.linalg.norm(pos_0 - pos_1)) * epsilon
-    i = 0
-    for i in range(max_iterations):
-        if np.linalg.norm(pos_1 - pos_0) < epsilon:
-            break
-        pos_c = (pos_1 + pos_0) * 0.5
-
-        if f(*(pos_c + direction)) > f(*(pos_c - direction)):
-            pos_1 = pos_c
-            continue
-
-        pos_0 = pos_c
-    log.info(f"Dichotomy iterations number: {i}")
-    return (pos_1 + pos_0) * 0.5
-
-
-def find_min_by_coordinate_descent(start_pos: tuple[float, float], f: FunctionType, config: DictConfig):
+def coordinate_descent(f: AbstractFunction, x, config: DictConfig):
     """
-    Coordinate descent is an optimization algorithm that successively minimizes along coordinate directions to find
-    the minimum of a function. At each iteration, the algorithm determines a coordinate or coordinate block via a
-    coordinate selection rule, then exactly or inexactly minimizes over the corresponding coordinate hyperplane while
-    fixing all other coordinates or coordinate blocks.
-
-    https://en.wikipedia.org/wiki/Coordinate_descent
-    :param start_pos: coordinates of start position
-    :param config: hydra config with precisions parameters
-    :param f: function to find min
-    :return: x of function minimum
+    Coordinate Descent
+    :param f: function
+    :param x: starting point
+    :param config: config with precision parameters
+    :return: minimum of function
     """
-    epsilon = config.epsilon
-    max_iterations = config.N
-
-    opt_coord_n = 0
-    step = 1
-
-    pos_0 = np.array(start_pos)
-    pos_1 = np.array(start_pos)
-
-    for i in range(max_iterations):
-        coordinate_number = i % len(start_pos)
-
-        pos_1[coordinate_number] = pos_1[coordinate_number] - epsilon
-        f_0 = f(*pos_1)
-
-        pos_1[coordinate_number] = pos_1[coordinate_number] + 2 * epsilon
-        f_1 = f(*pos_1)
-
-        pos_1[coordinate_number] = pos_1[coordinate_number] + step if f_0 > f_1 else pos_1[coordinate_number] - step
-
-        x_i = pos_0[coordinate_number]
-        pos_1 = __find_min_by_dichotomy(f, pos_0, pos_1, config)
-
-        pos_0 = pos_1
-
-        if abs(pos_1[coordinate_number] - x_i) < epsilon:
-            opt_coord_n += 1
-            if opt_coord_n == len(pos_1):
-                log.info(f"Per coord descend iterations number : {i}")
-                return pos_0
-            continue
-        opt_coord_n = 0
-    log.info(f"per coord descend iterations number : {max_iterations}")
-
-    return pos_0
-
-
-def find_min_by_gradient_descent(start_pos: tuple[float, float], f: FunctionType, config: DictConfig):
-    def gradient(function: FunctionType, x, eps):
-        x_l = x
-        x_r = x
-        df = np.zeros(len(x))
-
-        for i in range(len(x)):
-            x_l[i] = x_l[i] - eps
-            x_r[i] = x_r[i] + eps
-
-            df[i] = (function(*x_r) - function(*x_l)) * (0.5 / eps)
-
-            x_l[i] = x_l[i] + eps
-            x_r[i] = x_r[i] - eps
-        return df
-
-    epsilon = config.epsilon
-    max_iterations = config.N
-
-    pos_i = np.array(start_pos)
-
-    pos_i_1 = np.array(start_pos)
-
-    counter = 0
+    step = config['step']
+    epsilon = np.array([[config['epsilon'], config['epsilon']]])
+    iteration = 0
     while True:
-        counter += 1
-        if counter == max_iterations:
-            break
-        pos_i_1 = pos_i - gradient(f, pos_i, epsilon)
+        x_prev = np.copy(x)
+        for i in range(0, len(x)):
+            x_new = np.copy(x)
+            x_new[i] += step
+            fx = f(x)
+            fx_new = f(x_new)
 
-        pos_i_1 = __find_min_by_dichotomy(f, pos_i, pos_i_1, config)
+            while fx_new < fx:
+                x[i] = x_new[i]
+                fx = fx_new
+                x_new[i] += step
+                fx_new = f(x_new)
+                iteration += 1
 
-        if np.linalg.norm(pos_i_1 - pos_i) < epsilon:
-            break
-        pos_i = pos_i_1
+        if all(np.abs(x - x_prev) < epsilon):
+            print(f"Iterations: {iteration}")
+            return x
 
-    log.info(f"gradient descend iterations number :  + {counter}")
 
-    return (pos_i_1 + pos_i) * 0.5
+def gradient_descent(f: AbstractFunction, x, config: DictConfig):
+    """
+    Gradient Descent
+    :param x: starting point
+    :param config: config with precision parameters
+    :param f: function
+    :return: minimum of function
+    """
+    step = config['step']
+    epsilon = np.array([[config['epsilon'], config['epsilon']]])
+    iteration = 0
+    while True:
+        x_prev = np.copy(x)
+        fx_prev = f(x_prev)
+        grad_fx = f.grad(x)
+        x -= step * grad_fx
+        fx = f(x)
+        while fx < fx_prev:
+            x -= step * grad_fx
+            fx_prev = fx
+            fx = f(x)
+            iteration += 1
+
+        if all(np.abs(x - x_prev) < epsilon):
+            print(f"Iterations: {iteration}")
+            return x
+
+
+def newton_descent(f: AbstractFunction, H, x, config: DictConfig):
+    """
+    Newton Descent
+    :param f: function
+    :param H: matrix of second derivatives of f
+    :param x: starting points
+    :param config: config with precision parameters
+    :return: minimum of function
+    :return: minimum of function
+    """
+    epsilon = np.array([[config['epsilon'], config['epsilon']]])
+    iteration = 0
+    while True:
+        x_prev = np.copy(x)
+        x = x - np.linalg.inv(H(x)).dot(f.grad(x))
+        iteration += 1
+
+        if all(np.abs(x - x_prev) < epsilon):
+            print(f"Iterations: {iteration}")
+            return x

@@ -7,11 +7,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..controllers.one_dimensional_methods import find_min_by_gold, find_min_by_fibonacci, find_min_by_dichotomy
-from ..models.one_dimensional_functions import *
+from collections import namedtuple
+from app.models.one_dimensional_functions import f1, f2, f3, f4, TestCase
 
 log = logging.getLogger(__name__)
 
-test_cases = TEST_CASES
+case = namedtuple('TestCase', ['a', 'b', 'f'])
+#                  a    b   f
+test_cases = (TestCase(-10, 10, f1),
+              TestCase(-2, 3, f2),
+              TestCase(-2, 2, f3),
+              TestCase(-10, 10, f4))
 
 
 def one_argument_form(config: DictConfig):

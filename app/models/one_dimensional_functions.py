@@ -1,5 +1,6 @@
-from collections import namedtuple
+from dataclasses import dataclass
 from math import cosh, exp, tanh
+from types import FunctionType
 
 
 def f1(x: float) -> float:
@@ -44,9 +45,9 @@ def fib(n: int) -> int:
         return fib(n - 1) + fib(n - 2)
 
 
-case = namedtuple('TestCase', ['a', 'b', 'f'])
-#                  a    b   f
-TEST_CASES = (case(-10, 10, f1),
-              case(-2, 3, f2),
-              case(-2, 2, f3),
-              case(-10, 10, f4))
+@dataclass
+class TestCase:
+    a: int
+    b: int
+    f: FunctionType
+
