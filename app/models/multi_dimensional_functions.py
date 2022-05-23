@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 import numpy as np
 
@@ -6,15 +6,20 @@ from math import sqrt, cos, sin, cosh, sinh, pi
 
 alpha = pi / 6
 
+A = 1
+B = 2
+
 
 class AbstractFunction(ABC):
     def __init__(self, x0, y0):
         self.x0 = x0
         self.y0 = y0
 
+    @abstractmethod
     def __call__(self, *x):
         pass
 
+    @abstractmethod
     def grad(self, coords):
         pass
 
@@ -33,21 +38,34 @@ class QuadraticFunction(AbstractFunction):
         return np.array([[2 * (float(coords[0] - self.x0))], [2 * (float(coords[1] - self.y0))]])
 
 
-class HyperbolicCosineFunction(AbstractFunction):
+class CosineFunction(AbstractFunction):
     def __init__(self, x0=1, y0=2):
-        super(HyperbolicCosineFunction, self).__init__(x0, y0)
+        super(CosineFunction, self).__init__(x0, y0)
 
-    def __call__(self, *coords):
-        x_new = self.__calculate_x_new(coords)
-        return np.array([[sinh(x_new[0]) * cos(alpha)], [sinh(x_new[1]) * sin(alpha)]])
+    def __call__(self, x: np.matrix):
+        x_new = np.matrix(
+            [[(x[0, 0] - self.x0) * cos(alpha) + (x[1, 0] - self.y0) * sin(alpha)],
+             [(x[1, 0] - self.y0) * cos(alpha) - (x[0, 0] - self.x0) * sin(alpha)]],
+            float)
+        return A * (x_new[0]) ** 2 + B * (x_new[1]) ** 2
 
-    def grad(self, coords):
-        x_new = self.__calculate_x_new(coords)
-        return np.array([[sinh(x_new[0]) * cos(alpha)], [sinh(x_new[1]) * sin(alpha)]])
+    def grad(self, x):
+        x_new = np.matrix(
+            [[2 * A * cos(alpha) * ((x[0, 0] - self.x0) * cos(alpha) + (x[1, 0] - self.y0) * sin(alpha)) -
+              2 * B * sin(alpha) * ((x[1, 0] - self.y0) * cos(alpha) - (x[0, 0] - self.x0) * sin(alpha))],
 
+             [2 * A * sin(alpha) * ((x[0, 0] - self.x0) * cos(alpha) + (x[1, 0] - self.y0) * sin(alpha))
+              + 2 * B * cos(alpha) * ((x[1, 0] - self.y0) * cos(alpha) - (x[0, 0] - self.x0) * sin(alpha))]],
+            float)
+
+        return np.array([[x_new[0, 0]], [x_new[1, 0]]])
+
+    # матрица Гессе
     def h(self, coords):
-        x_new = self.__calculate_x_new(coords)
-        return np.array([[cosh(x_new[0]) * cos(alpha) ** 2, 0.], [0., cosh(coords[1]) * sin(alpha) ** 2]])
+        return np.array([[2 * A * (cos(alpha)) ** 2 + 2 * B * (sin(alpha)) ** 2,
+                          2 * (cos(alpha)) * (sin(alpha)) * (A - B)],
+                         [2 * (cos(alpha)) * (sin(alpha)) * (A - B),
+                          2 * A * (sin(alpha)) ** 2 + 2 * B * (cos(alpha)) ** 2]])
 
     def __calculate_x_new(self, coords):
         coords = np.array(coords)
@@ -57,9 +75,4 @@ class HyperbolicCosineFunction(AbstractFunction):
                           [(coords[1, 0] - y0) * sin(alpha) - (coords[0, 0] - x0) * cos(alpha)]], float)
 
     def __repr__(self):
-        # !FIXME
-        return f"Hyperbolic"
-
-
-def f(x, y):
-    return np.sin(np.sqrt(x ** 2 + y ** 2))
+        return f"Cosine"

@@ -14,21 +14,25 @@ log = logging.getLogger(__name__)
 
 case = namedtuple('TestCase', ['a', 'b', 'f'])
 #                  a    b   f
-test_cases = (TestCase(-10, 10, f1),
-              TestCase(-2, 3, f2),
-              TestCase(-2, 2, f3),
-              TestCase(-10, 10, f4))
+test_cases = {f'[-10, 10, {f1.__doc__}]': TestCase(-10, 10, f1),
+              f'[-2, 3, {f2.__doc__}]': TestCase(-2, 3, f2),
+              f'[-2, 2, {f3.__doc__}]': TestCase(-2, 2, f3),
+              f'[-10, 10, {f4.__doc__}]': TestCase(-10, 10, f4)}
 
 
 def one_argument_form(config: DictConfig):
     st.title("Functions of one argument")
-    methods = [find_min_by_dichotomy, find_min_by_gold, find_min_by_fibonacci]
+    methods = {
+        'dichotomy': find_min_by_dichotomy,
+        'gold_ratio': find_min_by_gold,
+        'fibonacci': find_min_by_fibonacci}
 
-    test_case = st.selectbox("Function to optimize", test_cases, format_func=lambda x: f"[{x.a},{x.b}] {x.f.__doc__}")
-    method = st.selectbox("Optimization method", methods, format_func=lambda x: x.__name__)
+    test_case_key = st.selectbox("Function to optimize", test_cases.keys())
+    method_key = st.selectbox("Optimization method", methods)
 
-    result, iterations = method(test_case.a, test_case.b, test_case.f, epsilon=config.epsilon,
-                                precision=config.precision, n=config.N)
+    test_case = test_cases[test_case_key]
+    result, iterations = methods[method_key](test_case.a, test_case.b, test_case.f, epsilon=config.epsilon,
+                                             precision=config.precision, n=config.N)
 
     st.write(f"Minimum of function = {result}")
     st.write(f"Number of iterations = {iterations}")

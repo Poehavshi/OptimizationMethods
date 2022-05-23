@@ -1,5 +1,5 @@
 dashes_number: 40
-epsilon: 0.0025
+epsilon: 0.001
 precision: 0.005
 N: 20
 step: 0.01

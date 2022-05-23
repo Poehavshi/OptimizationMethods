@@ -14,7 +14,7 @@ poetry install
 ```
 4. Run streamlit
 ```shell
-poetry run streamlit main.py
+poetry run streamlit run main.py
 ```
 
 ### Pycharm
@@ -23,5 +23,5 @@ poetry run streamlit main.py
 3. Tick "install packages from pyproject.toml" and select other options
 4. Run streamlit in pycharm terminal:
 ```shell
-run streamlit main.py
+streamlit run  main.py
 ```

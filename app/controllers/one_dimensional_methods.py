@@ -41,7 +41,7 @@ def find_min_by_dichotomy(a: float, b: float, f: FunctionType, **kwargs) -> tupl
         elif y1 > y2:
             a = x - epsilon / 2
         count += 2
-    log.info(f"Iterations: {count}")
+    # log.info(f"Dichotomy iterations: {count}")
     return x, count
 
 
@@ -78,7 +78,7 @@ def find_min_by_gold(a: float, b: float, f: FunctionType, **kwargs) -> tuple[flo
             y2 = f(b - (b - a) * 0.382)
 
     x = (a + b) / 2
-    log.info(f"Count number: {count}")
+    # log.info(f"Count number: {count}")
     return x, count
 
 
@@ -123,7 +123,7 @@ def find_min_by_fibonacci(a: float, b: float, f: FunctionType, **kwargs) -> tupl
             y1 = f(x1)
 
     x = (x1 + x2) / 2
-    log.info(f"Count number: {count}")
+    # log.info(f"Count number: {count}")
     return x, count
 
 

@@ -16,7 +16,9 @@ def coordinate_descent(f: AbstractFunction, x, config: DictConfig):
     :return: minimum of function
     """
     step = config['step']
-    epsilon = np.array([[config['epsilon'], config['epsilon']]])
+    eps = config['epsilon']
+    epsilon = np.array([[eps],
+                        [eps]])
     iteration = 0
     while True:
         x_prev = np.copy(x)
@@ -34,7 +36,7 @@ def coordinate_descent(f: AbstractFunction, x, config: DictConfig):
                 iteration += 1
 
         if all(np.abs(x - x_prev) < epsilon):
-            print(f"Iterations: {iteration}")
+            log.info(f"Coordinate descent number of iterations: {iteration}")
             return x
 
 
@@ -47,26 +49,32 @@ def gradient_descent(f: AbstractFunction, x, config: DictConfig):
     :return: minimum of function
     """
     step = config['step']
-    epsilon = np.array([[config['epsilon'], config['epsilon']]])
-    iteration = 0
+    eps = config['epsilon']
+    epsilon = np.array([[eps],
+                        [eps]])
+    step, iteration = 0, 0
+    i = 0
+    mx = 100
     while True:
+        step = 1 / min(i + 1, mx)
+        i += 1
         x_prev = np.copy(x)
         fx_prev = f(x_prev)
         grad_fx = f.grad(x)
         x -= step * grad_fx
         fx = f(x)
         while fx < fx_prev:
+            iteration += 1
             x -= step * grad_fx
             fx_prev = fx
             fx = f(x)
-            iteration += 1
 
         if all(np.abs(x - x_prev) < epsilon):
-            print(f"Iterations: {iteration}")
+            log.info("Gradient descent number of iterations: ", iteration)
             return x
 
 
-def newton_descent(f: AbstractFunction, H, x, config: DictConfig):
+def newton_descent(f: AbstractFunction, x, config: DictConfig):
     """
     Newton Descent
     :param f: function
@@ -76,13 +84,15 @@ def newton_descent(f: AbstractFunction, H, x, config: DictConfig):
     :return: minimum of function
     :return: minimum of function
     """
-    epsilon = np.array([[config['epsilon'], config['epsilon']]])
+    eps = config['epsilon']
+    epsilon = np.array([[eps],
+                        [eps]])
     iteration = 0
     while True:
         x_prev = np.copy(x)
-        x = x - np.linalg.inv(H(x)).dot(f.grad(x))
+        x = x - np.linalg.inv(f.h(x)).dot(f.grad(x))
         iteration += 1
 
         if all(np.abs(x - x_prev) < epsilon):
-            print(f"Iterations: {iteration}")
+            log.info(f"Newton descent number of iterations: {iteration}")
             return x
