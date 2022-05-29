@@ -27,6 +27,11 @@ def coordinate_descent(f: AbstractFunction, x, config: DictConfig):
             x_new[i] += step
             fx = f(x)
             fx_new = f(x_new)
+            if fx_new > fx:
+                x_new = np.copy(x)
+                step = -step
+                x_new[i] += step
+                fx_new = f(x_new)
 
             while fx_new < fx:
                 x[i] = x_new[i]

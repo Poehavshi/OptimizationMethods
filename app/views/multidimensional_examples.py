@@ -30,7 +30,8 @@ def two_argument_form(config: DictConfig):
 
     start_points = {
         "(-1, -2)": np.matrix([[-1.], [-2.]]),
-        "(-4, -5)": np.matrix([[-4.], [-5.]])
+        "(-4, -5)": np.matrix([[-4.], [-5.]]),
+        "(4, 5)": np.matrix([[4.], [5.]])
     }
     x = start_points[st.selectbox("Start point", start_points)]
 
